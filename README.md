@@ -71,6 +71,6 @@ We welcome contributions to the DVerse frontend! Please read the following instr
 - [Marc van Grootel](https://github.com/xokomola)
 - [Brett Mulder](https://github.com/Brett-Mulder)
 - [Reno Muijsenberg](https://github.com/renomuijsenberg)
-- [Bas Onrust](https://github.com/AmFontys)
-- [Arenco Meevissen](https://github.com/Saprone)
+- [Bas Onrust](https://github.com/Saprone)
+- [Arenco Meevissen](https://github.com/AmFontys)
 - [Iulia Toderaşcu](https://github.com/iuliaToderascu)
