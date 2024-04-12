@@ -43,7 +43,7 @@ export default auth((req) => {
 export const config = {
     matcher: [
         {
-            source: '/((?!api|_next/static|_next/image|favicon.ico|login).*)',
+            source: '/((?!api|_next/static|_next/image|images|favicon.ico|login).*)',
             missing: [
                 { type: 'header', key: 'next-router-prefetch' },
                 { type: 'header', key: 'purpose', value: 'prefetch' },

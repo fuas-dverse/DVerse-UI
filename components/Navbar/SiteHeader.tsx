@@ -40,7 +40,7 @@ export function SiteHeader() {
                                     variant: "ghost",
                                 })}
                             >
-                                <Image src={"/mastodon-icon.svg"} alt={"Mastodon"} height={24} width={24}/>
+                                <Image src={"/images/mastodon-icon.svg"} alt={"Mastodon"} height={24} width={24}/>
                                 <span className="sr-only">Twitter</span>
                             </div>
                         </Link>

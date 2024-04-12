@@ -1,4 +1,5 @@
 import {signIn} from "@/auth";
+import {Button} from "@/components/ui/button";
 
 export default function Login() {
 	return (
@@ -7,7 +8,9 @@ export default function Login() {
 				"use server"
 				await signIn("keycloak")
 			}}>
-			<button type="submit">Sign in</button>
+			<Button variant="outline" className="w-full">
+				Sign in with Keycloak
+			</Button>
 		</form>
 	)
 }
