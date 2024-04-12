@@ -1,10 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { auth } from "@/auth";
+import { NextResponse } from "next/server";
 
-export function middleware(request: NextRequest) {
-    //Nonces offer a way to allow inline scripts to execute if they have the correct nonce.
-    const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
+export default auth((req) => {
+    if (!req.auth) {
+        const schema: string = req.nextUrl.protocol;
+        const host: string = req.nextUrl.host;
 
-    const cspHeader = `
+        return NextResponse.redirect(`${schema}//${host}/login`)
+    }
+
+    // Content Security Policy generation
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    const nonce: string = Buffer.from(array).toString('base64')
+
+    const cspHeader: string = `
         default-src 'self';
         script-src 'self' 'strict-dynamic' 'unsafe-eval' 'nonce-${nonce}';
         script-src-elem 'self' 'unsafe-inline';
@@ -17,48 +27,28 @@ export function middleware(request: NextRequest) {
         form-action 'self'; 
         upgrade-insecure-requests;
         base-uri 'self'
-    `
-    //For style-src 'self' 'nonce-${nonce}'; is wanted not script-src 'self' 'unsafe-eval'  'unsafe-inline';
-    //For script-src 'self'  'nonce-${nonce}' 'strict-dynamic'; is wanted
-    //Because of EvalError mostly in @next/react-refresh-utils/dist/runtime.js unsafe-eval needs to be set.
+    `.replace(/\s{2,}/g, ' ').trim()
 
-    // Replace newline characters and spaces
-    const contentSecurityPolicyHeaderValue = cspHeader
-        .replace(/\s{2,}/g, ' ')
-        .trim()
 
-    const requestHeaders = new Headers(request.headers)
-      requestHeaders.set('x-nonce', nonce)
+    const requestHeaders = new Headers(req.headers)
+    requestHeaders.set('x-nonce', nonce)
+    requestHeaders.set('Content-Security-Policy', cspHeader)
 
-    requestHeaders.set(
-        'Content-Security-Policy',
-        contentSecurityPolicyHeaderValue
-    )
 
     const response = NextResponse.next({
         request: {
             headers: requestHeaders,
         },
     })
-    response.headers.set(
-        'Content-Security-Policy',
-        contentSecurityPolicyHeaderValue
-    )
+    response.headers.set('Content-Security-Policy', cspHeader)
 
     return response
-}
+});
 
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         */
         {
-            source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+            source: '/((?!api|_next/static|_next/image|images|favicon.ico|login).*)',
             missing: [
                 { type: 'header', key: 'next-router-prefetch' },
                 { type: 'header', key: 'purpose', value: 'prefetch' },

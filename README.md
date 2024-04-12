@@ -21,7 +21,7 @@ Before you can run the project, you need to install its dependencies. Navigate t
 and run:
 
 ```bash
-npm shell
+npm install
 ```
 
 or if you prefer yarn:

@@ -1,11 +1,11 @@
 import Link from "next/link"
-
 import { siteConfig } from "@/config/site"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/Icons/icons"
 import { MainNav } from "@/components/Navbar/MainNav"
 import {ThemeSwitcher} from "@/components/Theme/theme-switcher";
 import Image from "next/image";
+import {signOut} from "@/auth";
 
 export function SiteHeader() {
     return (
@@ -21,11 +21,10 @@ export function SiteHeader() {
                         >
                             <div
                                 className={buttonVariants({
-                                    size: "icon",
-                                    variant: "ghost",
+                                    size: "icon", variant: "ghost",
                                 })}
                             >
-                                <Icons.gitHub className="h-5 w-5" />
+                                <Icons.gitHub className="h-5 w-5"/>
                                 <span className="sr-only">GitHub</span>
                             </div>
                         </Link>
@@ -36,11 +35,10 @@ export function SiteHeader() {
                         >
                             <div
                                 className={buttonVariants({
-                                    size: "icon",
-                                    variant: "ghost",
+                                    size: "icon", variant: "ghost",
                                 })}
                             >
-                                <Image src={"/mastodon-icon.svg"} alt={"Mastodon"} height={24} width={24}/>
+                                <Image src={"/images/mastodon-icon.svg"} alt={"Mastodon"} height={24} width={24}/>
                                 <span className="sr-only">Twitter</span>
                             </div>
                         </Link>
@@ -51,15 +49,14 @@ export function SiteHeader() {
                         >
                             <div
                                 className={buttonVariants({
-                                    size: "icon",
-                                    variant: "ghost",
+                                    size: "icon", variant: "ghost",
                                 })}
                             >
-                                <Icons.docs className="h-5 w-5" />
+                                <Icons.docs className="h-5 w-5"/>
                                 <span className="sr-only">Documentation</span>
                             </div>
                         </Link>
-                        <ThemeSwitcher />
+                        <ThemeSwitcher/>
                     </nav>
                 </div>
             </div>
