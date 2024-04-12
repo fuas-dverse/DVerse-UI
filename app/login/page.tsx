@@ -1,13 +1,24 @@
-import {signIn} from "@/auth";
+import Login from "@/components/Auth/Login";
+import Logout from "@/components/Auth/Logout";
+import {auth} from "@/auth";
 
-export default function Page() {
+export default async function LoginPage() {
+	const session = await auth();
+
 	return (
-		<form
-			action={async () => {
-				"use server"
-				await signIn("keycloak")
-			}}>
-			<button type="submit">Signin with Keycloak</button>
-		</form>
-	)
+		<div>
+			{
+				session ?
+				(
+					<>
+                        <div>Your name is {session.user?.name}</div>
+                        <Logout/>
+                    </>
+				) :
+				(
+					<Login/>
+				)
+			}
+		</div>
+	);
 }
