@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-import crypto from 'crypto';
 
 export default auth((req) => {
     if (!req.auth) {
@@ -11,7 +10,9 @@ export default auth((req) => {
     }
 
     // Content Security Policy generation
-    const nonce: string = Buffer.from(crypto.randomUUID()).toString('base64')
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    const nonce: string = Buffer.from(array).toString('base64')
 
     const cspHeader: string = `
         default-src 'self';
@@ -33,11 +34,15 @@ export default auth((req) => {
     requestHeaders.set('x-nonce', nonce)
     requestHeaders.set('Content-Security-Policy', cspHeader)
 
-    return NextResponse.next({
+
+    const response = NextResponse.next({
         request: {
             headers: requestHeaders,
         },
-    }).headers.set('Content-Security-Policy', cspHeader)
+    })
+    response.headers.set('Content-Security-Policy', cspHeader)
+
+    return response
 });
 
 export const config = {
