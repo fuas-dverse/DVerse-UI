@@ -1,10 +1,11 @@
-import {LucideProps, Moon, SunMedium, type LucideIcon} from "lucide-react"
+import {LucideProps, Moon, SunMedium, type LucideIcon, User} from "lucide-react"
 
 export type Icon = LucideIcon
 
 export const Icons = {
     sun: SunMedium,
     moon: Moon,
+    user: User,
     mastodon: (props: LucideProps) => (<svg fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                                             stroke="#ffffff">
             <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
