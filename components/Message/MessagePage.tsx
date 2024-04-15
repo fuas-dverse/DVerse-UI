@@ -6,15 +6,6 @@ import {io} from "socket.io-client"
 export default function MessagePage() {
     const [messages, setMessages] = useState<MessageBubbleProps[]>([
         {id: 1, text: 'Hello! How can I help you today?', sender: 'bot'},
-        {id: 2, text: 'Can you tell me more about NextUI?', sender: 'user'},
-        {id: 3, text: 'Can you tell me more about NextUI?', sender: 'user'},
-        {id: 4, text: 'Can you tell me more about NextUI?', sender: 'user'},
-        {id: 5, text: 'Can you tell me more about NextUI?', sender: 'user'},
-        {id: 6, text: 'Can you tell me more about NextUI?', sender: 'user'},
-        {id: 7, text: 'Can you tell me more about NextUI?', sender: 'user'},
-        {id: 8, text: 'Can you tell me more about NextUI?', sender: 'user'},
-        {id: 9, text: 'Can you tell me more about NextUI?', sender: 'user'},
-        {id: 10, text: 'Can you tell me more about NextUI?', sender: 'bot'},
     ]);
 
     // const [socket, setSocket] = useState<any>(undefined)

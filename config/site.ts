@@ -7,7 +7,7 @@ export const siteConfig = {
     mainNav: [
         {
             title: "Chat",
-            href: "/",
+            href: "/chat",
         }, {
             title: "Explore",
             href: "/",
