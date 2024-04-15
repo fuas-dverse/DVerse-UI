@@ -1,12 +1,12 @@
 import Link from "next/link"
 import {siteConfig} from "@/config/site"
-import {Button, buttonVariants} from "@/components/ui/button"
+import {buttonVariants} from "@/components/ui/button"
 import {Icons} from "@/components/Icons/icons"
 import {MainNav} from "@/components/Navbar/MainNav"
 import {ThemeSwitcher} from "@/components/Theme/theme-switcher";
-import {CheckIcon} from "lucide-react";
-import {auth} from "@/auth";
 import User from "@/components/Auth/User";
+import StatusToggle from "@/components/Status/StatusToggle";
+import {usePathname} from "next/navigation";
 
 export async function SiteHeader() {
 
@@ -16,10 +16,7 @@ export async function SiteHeader() {
                 <MainNav items={siteConfig.mainNav}/>
                 <div className="flex flex-1 items-center justify-end space-x-4">
                     <nav className="flex items-center space-x-0 sm:space-x-1">
-                        <div className={"inline-block"}>
-                            Status -
-                            <CheckIcon color={"green"}/>
-                        </div>
+                        <StatusToggle/>
                         <Link
                             href={siteConfig.links.github}
                             target="_blank"
