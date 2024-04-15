@@ -7,5 +7,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         redirect: async () => {
             return "/";
         }
-    }
+    },
+    secret: process.env.AUTH_SECRET,
 })

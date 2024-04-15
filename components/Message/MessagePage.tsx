@@ -1,3 +1,4 @@
+"use client"
 import MessageBubble, {MessageBubbleProps} from "@/components/Message/MessageBubble";
 import {useEffect, useState} from "react";
 import {io} from "socket.io-client"
@@ -16,29 +17,29 @@ export default function MessagePage() {
         {id: 10, text: 'Can you tell me more about NextUI?', sender: 'bot'},
     ]);
 
-    const [socket, setSocket] = useState<any>(undefined)
-
-    useEffect(() => {
-        const socket = io("http://localhost:3001/");
-
-        socket.on("message", (message) => {
-            setMessages((currentMessages) => [
-                ...currentMessages,
-                {
-                    id: currentMessages.length + 1,
-                    text: message,
-                    sender: "user",
-                },
-            ]);
-        });
-
-        setSocket(socket);
-
-        // Cleanup on component unmount
-        return () => {
-            socket.disconnect()
-        }
-    }, []);
+    // const [socket, setSocket] = useState<any>(undefined)
+    //
+    // useEffect(() => {
+    //     const socket = io("http://localhost:3001/");
+    //
+    //     socket.on("message", (message) => {
+    //         setMessages((currentMessages) => [
+    //             ...currentMessages,
+    //             {
+    //                 id: currentMessages.length + 1,
+    //                 text: message,
+    //                 sender: "user",
+    //             },
+    //         ]);
+    //     });
+    //
+    //     setSocket(socket);
+    //
+    //     // Cleanup on component unmount
+    //     return () => {
+    //         socket.disconnect()
+    //     }
+    // }, []);
 
 
     return (

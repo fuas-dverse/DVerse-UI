@@ -1,5 +1,3 @@
-"use client"
-
 import "./globals.css";
 import {Inter as FontSans} from "next/font/google"
 import {cn} from "@/lib/utils"
@@ -11,7 +9,7 @@ const fontSans = FontSans({
     variable: "--font-sans",
 })
 
-export default function RootLayout(
+export default async function RootLayout(
     {
         children,
     }: Readonly<{

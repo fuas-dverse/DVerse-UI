@@ -1,19 +1,25 @@
 import Link from "next/link"
-import { siteConfig } from "@/config/site"
-import { buttonVariants } from "@/components/ui/button"
-import { Icons } from "@/components/Icons/icons"
-import { MainNav } from "@/components/Navbar/MainNav"
+import {siteConfig} from "@/config/site"
+import {Button, buttonVariants} from "@/components/ui/button"
+import {Icons} from "@/components/Icons/icons"
+import {MainNav} from "@/components/Navbar/MainNav"
 import {ThemeSwitcher} from "@/components/Theme/theme-switcher";
-import Image from "next/image";
-import {signOut} from "@/auth";
+import {CheckIcon} from "lucide-react";
+import {auth} from "@/auth";
+import User from "@/components/Auth/User";
 
-export function SiteHeader() {
+export async function SiteHeader() {
+
     return (
         <header className="sticky top-0 z-40 w-full border-b bg-background">
             <div className="container flex h-16 items-center space-x-4 sm:justify-evenly sm:space-x-0">
-                <MainNav items={siteConfig.mainNav} />
+                <MainNav items={siteConfig.mainNav}/>
                 <div className="flex flex-1 items-center justify-end space-x-4">
                     <nav className="flex items-center space-x-0 sm:space-x-1">
+                        <div className={"inline-block"}>
+                            Status -
+                            <CheckIcon color={"green"}/>
+                        </div>
                         <Link
                             href={siteConfig.links.github}
                             target="_blank"
@@ -26,20 +32,6 @@ export function SiteHeader() {
                             >
                                 <Icons.gitHub className="h-5 w-5"/>
                                 <span className="sr-only">GitHub</span>
-                            </div>
-                        </Link>
-                        <Link
-                            href={siteConfig.links.mastodon}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <div
-                                className={buttonVariants({
-                                    size: "icon", variant: "ghost",
-                                })}
-                            >
-                                <Image src={"/images/mastodon-icon.svg"} alt={"Mastodon"} height={24} width={24}/>
-                                <span className="sr-only">Twitter</span>
                             </div>
                         </Link>
                         <Link
@@ -57,6 +49,7 @@ export function SiteHeader() {
                             </div>
                         </Link>
                         <ThemeSwitcher/>
+                        <User/>
                     </nav>
                 </div>
             </div>
