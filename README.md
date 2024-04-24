@@ -1,4 +1,4 @@
-# Frontend DVerse
+# Frontend DVerse - Prototype 3
 
 This part of the repository contains the code for the frontend of the DVerse project. This is a NextJS project using
 TypeScript. We chose NextJS as the framework because of its ease of setup and our team's familiarity with it. This
@@ -29,6 +29,10 @@ or if you prefer yarn:
 ```shell
 yarn install
 ```
+
+## Setup Keycloak
+This project contains keycloak for authentication. In order to start developing you need to setup Keycloak using this tutorial:
+https://github.com/fuas-dverse/DVerse-UI/wiki/Setup-Keycloak
 
 ## Environment Variables
 
