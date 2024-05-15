@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {io, Socket as IOSocket} from "socket.io-client";
+import { useEffect, useState } from "react";
+import { io, Socket as IOSocket } from "socket.io-client";
 
 // Define a type for the socket
 type SocketType = IOSocket | undefined;
