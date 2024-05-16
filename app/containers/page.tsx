@@ -5,44 +5,55 @@ import { Table } from "@/components/ui/table";
 
 import { Ban, FolderDown, Info, Pause, Play, ScrollText, SquareTerminal, Trash2, View } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
-import {useSocket} from "@/hooks/useSocket";
+import { useSocket } from "@/hooks/useSocket";
+import { resolve } from "path";
 
-type DataType = { container: string };
+type DataType = {
+    container_id: string;
+    container_image: string;
+    container_name: string;
+    container_status: string;
+};
 
-export default function ContainerPage(){
-    const [data, setData] = useState<DataType[]>([]); 
+export default function ContainerPage() {
+    const [data, setData] = useState<DataType[]>([]);
     const [page, setPage] = useState(1);
 
     let msgToSend = {};
     let outputUser = "";
 
     useEffect(() => {
-        // Fetch the data from your API or server
-        // This is a placeholder and should be replaced with your actual data fetching logic
+        console.log("useEffect");
+        // Fetch the data from your server
         const fetchData = async () => {
-          const newData = await fetchContainerData(page);
-          setData(oldData => [...oldData, ...newData]);
+            try {
+                console.log("Fetch");
+                const newData = await fetchContainerData(page);
+                console.log("New: ",newData)
+                setData(oldData => [...oldData, ...newData]);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         };
-
         fetchData();
-  }, [page]);
+    }, [page]);
 
-  const handleScroll = (event) => {
-    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
-    setPage(oldPage => oldPage + 1);
-  };
+    const handleScroll = (event) => {
+        if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+        setPage(oldPage => oldPage + 1);
+    };
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
-  //Helper functions
-  function removeFromList(containerToRemove: string) {
-    
-    const updateData= data.filter((item)=>item.container != containerToRemove);
-    setData(updateData);
-        
+    //Helper functions
+    function removeFromList(containerToRemove: string) {
+
+        const updateData = data.filter((item) => item.container_id != containerToRemove);
+        setData(updateData);
+
     }
 
     const handleSocketMessage = useCallback((data: any): void => {
@@ -57,85 +68,106 @@ export default function ContainerPage(){
 
     const socket = useSocket(handleSocketMessage)
 
-    function sendToSocket(topic:string, input:{}){
-        socket?.emit("command",topic,input)
-        console.log("Topic: ",topic);
-        console.log("Input: ",input);
-    } 
+    function sendToSocket(topic: string, input: {}) {
+        socket?.emit("command", topic, input)
+        console.log("Topic: ", topic);
+        console.log("Input: ", input);
+    }
 
-  // Pure JavaScript functions
-  function handlePrompt(msg:string, standardInput:string):string {
-    let output = prompt(msg,standardInput)
-    if (output == null)
-        return "";
-    return output;
-  }
+    // Pure JavaScript functions
+    function handlePrompt(msg: string, standardInput: string): string {
+        let output = prompt(msg, standardInput)
+        if (output == null)
+            return "";
+        return output;
+    }
 
-   /* All Button onClick event functions */
+    /* All Button onClick event functions */
     function DeleteContainer(row: string): void {
         outputUser = handlePrompt("Are you sure? type yes or no", "no")
-        if(outputUser.toLowerCase()==="yes"){
-            msgToSend = {"Action":"Delete","Container":row}
-            sendToSocket("DiD_remove",msgToSend)
+        if (outputUser.toLowerCase() === "yes") {
+            msgToSend = { "Action": "Delete", "Container": row }
+            sendToSocket("DiD_remove", msgToSend)
             removeFromList(row)
         }
-        
+
     }
 
     function DownloadContent(row: string): void {
-        outputUser = handlePrompt("What do you want to download: ","ALL");
-        msgToSend = {"Action":"Download","Container":row,"DownloadWhat":outputUser}
-        sendToSocket("DiD_download",msgToSend);
+        outputUser = handlePrompt("What do you want to download: ", "ALL");
+        msgToSend = { "Action": "Download", "Container": row, "DownloadWhat": outputUser }
+        sendToSocket("DiD_download", msgToSend);
     }
 
     function ContainerCmd(row: string): void {
         outputUser = handlePrompt("What command do you want to execute", "ll")
-        msgToSend = {"Action":"Command","Container":row,"Command":outputUser}
-        sendToSocket("DiD_command",msgToSend);
+        msgToSend = { "Action": "Command", "Container": row, "Command": outputUser }
+        sendToSocket("DiD_command", msgToSend);
     }
 
     function GetLogFile(row: string): void {
-        outputUser = handlePrompt('Are you sure that you want the log file of '+row+', this can take a long time?',"no")
-        if(outputUser.toLowerCase()==="yes"){
-        msgToSend = {"Action":"Log","Container":row}
-        sendToSocket("DiD_logger",msgToSend);
+        outputUser = handlePrompt('Are you sure that you want the log file of ' + row + ', this can take a long time?', "no")
+        if (outputUser.toLowerCase() === "yes") {
+            msgToSend = { "Action": "Log", "Container": row }
+            sendToSocket("DiD_logger", msgToSend);
         }
     }
 
     function StartContainer(row: string): void {
-        msgToSend = {"Action":"Start","Container":row}
-        sendToSocket("DiD_running",msgToSend);
+        msgToSend = { "Action": "Start", "Container": row }
+        sendToSocket("DiD_running", msgToSend);
     }
 
     function PauseContainer(row: string): void {
-        msgToSend = {"Action":"Pause","Container":row}
-        sendToSocket("DiD_running",msgToSend);
+        msgToSend = { "Action": "Pause", "Container": row }
+        sendToSocket("DiD_running", msgToSend);
     }
 
     function StopContainer(row: string): void {
-        msgToSend = {"Action":"Stop","Container":row}
-        sendToSocket("DiD_running",msgToSend);
+        msgToSend = { "Action": "Stop", "Container": row }
+        sendToSocket("DiD_running", msgToSend);
     }
 
     //Initial data setup
-    function fetchContainerData(page: number): Promise<DataType[]> { // Make sure to use the type here as well
-        let output= socket?.emit("getContainer");
+    async function fetchContainerData(page: number): Promise<DataType[]> { // Make sure to use the type here as well
+        return new Promise<DataType[]>((resolve,reject)=>{
+            let dataContainers: DataType[] = [];//Collection of Containers
 
-        console.log("Output: ",output)
-    
-//     socket?.emit("getContainer",(data)=>{
-//         console.log('Received getContainer: ',data)
-// }
-// )
+            //Activate socket event
+            socket?.emit("getContainer");
+
+            //Activate the listen socket event
+            socket?.once("response_command", (data) => {
+                try {
+                    const bracketfree_data = data.replace(/\[|\]/g, '');
+                    const containerArray = bracketfree_data.split(`}",`);    
+                    parseToDataType(containerArray, dataContainers);
+                    // console.log('Received Response:', dataContainers);//If needed to test if the response is coming through
+                    resolve(dataContainers); // Resolve the promise with the data
+                } catch (error) {
+                    console.error('Error parsing response:', error);
+                    reject(error); // Reject the promise if there's an error
+                }
+            });
+
+        });
+
         
-        socket?.once("response_command",(data)=>{
-            console.log('Received Response: ',data)
-        })
-    
-        return Promise.resolve([
-            {container:"smtpDev1"},{container:"smtpDev2"},{container:"smtpDev3"},{container:"smtpDev4"},
-            {container:"smtpDev5"},{container:"smtpDev6"},{container:"smtpDev7"},{container:"smtpDev8"},
-            {container:"smtpDev9"},{container:"smtpDev10"},{container:"smtpDev11"},{container:"smtpDev12"}]); // This is just a placeholder
+        //Test data
+        // return Promise.resolve([
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        //     {container_id:"68f8de1a451df7a13fb344641e97d0130f3bee1014e3cd9a3192dc9b2bf3a114",container_image:"<Image: 'quay.io/keycloak/keycloak:24.0.1'>",container_name: "prototype3-keycloak-1",container_status:"running"},
+        // ]);
     }
 
 
@@ -153,17 +185,17 @@ export default function ContainerPage(){
                 <tbody>
                     {data.map((row, index) => (
                         <tr key={index}>
-                            <td>{row.container}</td>
+                            <td>{row.container_name}</td>
                             <td style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Button onClick={()=>DeleteContainer(row["container"])}><Trash2 /></Button>
-                                <Button onClick={()=>DownloadContent(row["container"])}><FolderDown /></Button>
-                                <Button onClick={()=>ContainerCmd(row["container"])}><SquareTerminal /></Button>
-                                <Button onClick={()=>GetLogFile(row["container"])}><ScrollText /></Button>
+                                <Button onClick={() => DeleteContainer(row["container_name"])}><Trash2 /></Button>
+                                <Button onClick={() => DownloadContent(row["container_name"])}><FolderDown /></Button>
+                                <Button onClick={() => ContainerCmd(row["container_name"])}><SquareTerminal /></Button>
+                                <Button onClick={() => GetLogFile(row["container_name"])}><ScrollText /></Button>
                             </td>
                             <td style={{ justifyContent: 'center' }}>
-                                <Button onClick={()=>StartContainer(row["container"])}><Play /></Button>
-                                <Button onClick={()=>PauseContainer(row["container"])}><Pause /></Button>
-                                <Button onClick={()=>StopContainer(row["container"])}><Ban /></Button>
+                                <Button onClick={() => StartContainer(row["container_name"])}><Play /></Button>
+                                <Button onClick={() => PauseContainer(row["container_name"])}><Pause /></Button>
+                                <Button onClick={() => StopContainer(row["container_name"])}><Ban /></Button>
                             </td>
                         </tr>
                     ))}
@@ -174,4 +206,31 @@ export default function ContainerPage(){
 }
 
 
+
+function parseToDataType(containerArray: any, dataContainers: DataType[]) {
+    containerArray.forEach((item: string) => {
+        if (!item.endsWith("}\"")) {
+            item = item + "}\"";
+        }
+
+        console.log("Before: ", item);
+        item = item.replace(/'/g, "");
+
+        console.log("Item: ", item);
+        const trimmedItem = item.trim();
+        console.log(trimmedItem);
+        //You need to parse it 2 times to get a JSON object no clear reason why
+        let json_item = JSON.parse(trimmedItem);
+        json_item = JSON.parse(json_item);
+
+        const dataType_item: DataType = {
+            container_id: json_item["container_id"],
+            container_image: json_item["container_image"],
+            container_name: json_item["container_name"],
+            container_status: json_item["container_status"]
+        };
+        console.log("Type: ", dataType_item);
+        dataContainers.push(dataType_item);
+    });
+}
 
