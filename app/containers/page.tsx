@@ -74,7 +74,7 @@ export default function ContainerPage() {
         console.log("Input: ", input);
     }
 
-    // Pure JavaScript functions
+    // Pure JavaScript functions for getting a prompt window
     function handlePrompt(msg: string, standardInput: string): string {
         let output = prompt(msg, standardInput)
         if (output == null)
@@ -82,50 +82,85 @@ export default function ContainerPage() {
         return output;
     }
 
+    //Pure JavaScript functions for getting a alert window
+    function handleAlert(msg:string){
+        alert(msg)
+    }
+
     /* All Button onClick event functions */
+
+    //Deletes the container
     function DeleteContainer(row: string): void {
         outputUser = handlePrompt("Are you sure? type yes or no", "no")
         if (outputUser.toLowerCase() === "yes") {
             msgToSend = { "Action": "Delete", "Container": row }
             sendToSocket("DiD_remove", msgToSend)
             removeFromList(row)
+            fetchResponseData();
         }
 
     }
 
+    //Downloads everything or a particular file
     function DownloadContent(row: string): void {
         outputUser = handlePrompt("What do you want to download: ", "ALL");
         msgToSend = { "Action": "Download", "Container": row, "DownloadWhat": outputUser }
         sendToSocket("DiD_download", msgToSend);
+        fetchResponseData();
     }
 
+    //Do a command in the container
     function ContainerCmd(row: string): void {
         outputUser = handlePrompt("What command do you want to execute", "ll")
         msgToSend = { "Action": "Command", "Container": row, "Command": outputUser }
         sendToSocket("DiD_command", msgToSend);
+        fetchResponseData();
     }
 
+    //Get the log file from a container
     function GetLogFile(row: string): void {
         outputUser = handlePrompt('Are you sure that you want the log file of ' + row + ', this can take a long time?', "no")
         if (outputUser.toLowerCase() === "yes") {
             msgToSend = { "Action": "Log", "Container": row }
             sendToSocket("DiD_logger", msgToSend);
+            fetchResponseData();
         }
     }
 
+    //Start the container when it was paused or stopped
     function StartContainer(row: string): void {
         msgToSend = { "Action": "Start", "Container": row }
         sendToSocket("DiD_running", msgToSend);
+        fetchResponseData();
     }
 
+    //Pauses the container
     function PauseContainer(row: string): void {
         msgToSend = { "Action": "Pause", "Container": row }
         sendToSocket("DiD_running", msgToSend);
+        fetchResponseData();
     }
 
+    //Stops the container
     function StopContainer(row: string): void {
         msgToSend = { "Action": "Stop", "Container": row }
         sendToSocket("DiD_running", msgToSend);
+        fetchResponseData();
+    }
+
+    //Retrieve the information from Kafka DiD_Response
+    async function fetchResponseData() {
+        //Activate socket event
+        socket?.emit("getResponse");
+        
+        socket?.emitWithAck("response_DiD", (data)=>{
+            console.log(data);//Log the data that is
+            //Change the data
+            
+            //Set the final variable as the message
+            const msg = data;
+            handleAlert(msg);
+        })
     }
 
     //Initial data setup
