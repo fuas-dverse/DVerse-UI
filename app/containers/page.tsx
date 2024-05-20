@@ -102,12 +102,12 @@ export default function ContainerPage() {
     }
 
     //Downloads everything or a particular file
-    function DownloadContent(row: string): void {
-        outputUser = handlePrompt("What do you want to download: ", "ALL");
-        msgToSend = { "Action": "Download", "Container": row, "DownloadWhat": outputUser }
-        sendToSocket("DiD_download", msgToSend);
-        fetchResponseData();
-    }
+    // function DownloadContent(row: string): void {
+    //     outputUser = handlePrompt("What do you want to download: ", "ALL");
+    //     msgToSend = { "Action": "Download", "Container": row, "DownloadWhat": outputUser }
+    //     sendToSocket("DiD_download", msgToSend);
+    //     fetchResponseData();
+    // }
 
     //Do a command in the container
     function ContainerCmd(row: string): void {
@@ -223,7 +223,7 @@ export default function ContainerPage() {
                             <td>{row.container_name}</td>
                             <td style={{ display: 'flex', justifyContent: 'center' }}>
                                 <Button onClick={() => DeleteContainer(row["container_name"])}><Trash2 /></Button>
-                                <Button onClick={() => DownloadContent(row["container_name"])}><FolderDown /></Button>
+                                {/* <Button onClick={() => DownloadContent(row["container_name"])}><FolderDown /></Button> */}
                                 <Button onClick={() => ContainerCmd(row["container_name"])}><SquareTerminal /></Button>
                                 <Button onClick={() => GetLogFile(row["container_name"])}><ScrollText /></Button>
                             </td>
