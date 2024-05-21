@@ -22,19 +22,20 @@ export default function ContainerPage() {
     let msgToSend = {};
     let outputUser = "";
 
+    async function fetchData(){
+        try {
+            console.log("Fetch");
+            const newData = await fetchContainerData(page);
+            console.log("New: ",newData)
+            setData(oldData => [...oldData, ...newData]);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
     useEffect(() => {
         console.log("useEffect");
         // Fetch the data from your server
-        const fetchData = async () => {
-            try {
-                console.log("Fetch");
-                const newData = await fetchContainerData(page);
-                console.log("New: ",newData)
-                setData(oldData => [...oldData, ...newData]);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
         fetchData();
     }, [page]);
 
@@ -153,7 +154,8 @@ export default function ContainerPage() {
         //Activate socket event
         socket?.emit("getResponse");
         
-        socket?.emitWithAck("response_DiD", (data)=>{
+        socket?.once("response_DiD", (data)=>{
+            console.log("response")
             console.log(data);//Log the data that is
             //Change the data
             
@@ -210,7 +212,7 @@ export default function ContainerPage() {
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
             <Table>
-                <thead style={{ position: 'sticky', top: 0, backgroundColor: '#fff' }}>
+                <thead style={{ top: 0, backgroundColor: '#fff' }}>
                     <tr>
                         <th>Container</th>
                         <th>Action</th>
@@ -220,20 +222,29 @@ export default function ContainerPage() {
                 <tbody>
                     {data.map((row, index) => (
                         <tr key={index}>
-                            <td>{row.container_name}</td>
-                            <td style={{ display: 'flex', justifyContent: 'center' }}>
+                            <td style={{ maxWidth: '30%', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                                {row.container_name}
+                            </td>
+                            <td style={{minWidth:'40%', display: 'flex', justifyContent: 'center' }}>
                                 <Button onClick={() => DeleteContainer(row["container_name"])}><Trash2 /></Button>
                                 {/* <Button onClick={() => DownloadContent(row["container_name"])}><FolderDown /></Button> */}
                                 <Button onClick={() => ContainerCmd(row["container_name"])}><SquareTerminal /></Button>
                                 <Button onClick={() => GetLogFile(row["container_name"])}><ScrollText /></Button>
                             </td>
-                            <td style={{ justifyContent: 'center' }}>
+                            <td style={{minWidth:'1em', justifyContent: 'center' }}>
                                 <Button onClick={() => StartContainer(row["container_name"])}><Play /></Button>
                                 <Button onClick={() => PauseContainer(row["container_name"])}><Pause /></Button>
                                 <Button onClick={() => StopContainer(row["container_name"])}><Ban /></Button>
                             </td>
                         </tr>
                     ))}
+                     {data.length <= 12 && (
+                    <tr>
+                        <td style={{ textAlign: 'center' }}>
+                            <Button onClick={() => fetchData()}>Load Data</Button>
+                        </td>
+                    </tr>
+                )}
                 </tbody>
             </Table>
         </div>
