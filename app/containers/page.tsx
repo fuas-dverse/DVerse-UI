@@ -226,15 +226,15 @@ export default function ContainerPage() {
                                 {row.container_name}
                             </td>
                             <td style={{minWidth:'40%', display: 'flex', justifyContent: 'center' }}>
-                                <Button onClick={() => DeleteContainer(row["container_name"])}><Trash2 /></Button>
-                                {/* <Button onClick={() => DownloadContent(row["container_name"])}><FolderDown /></Button> */}
-                                <Button onClick={() => ContainerCmd(row["container_name"])}><SquareTerminal /></Button>
-                                <Button onClick={() => GetLogFile(row["container_name"])}><ScrollText /></Button>
+                                <Button onClick={() => DeleteContainer(row["container_id"])}><Trash2 /></Button>
+                                {/* <Button onClick={() => DownloadContent(row["container_id"])}><FolderDown /></Button> */}
+                                <Button onClick={() => ContainerCmd(row["container_id"])}><SquareTerminal /></Button>
+                                <Button onClick={() => GetLogFile(row["container_id"])}><ScrollText /></Button>
                             </td>
                             <td style={{minWidth:'1em', justifyContent: 'center' }}>
-                                <Button onClick={() => StartContainer(row["container_name"])}><Play /></Button>
-                                <Button onClick={() => PauseContainer(row["container_name"])}><Pause /></Button>
-                                <Button onClick={() => StopContainer(row["container_name"])}><Ban /></Button>
+                                <Button onClick={() => StartContainer(row["container_id"])}><Play /></Button>
+                                <Button onClick={() => PauseContainer(row["container_id"])}><Pause /></Button>
+                                <Button onClick={() => StopContainer(row["container_id"])}><Ban /></Button>
                             </td>
                         </tr>
                     ))}
@@ -272,7 +272,7 @@ function parseToDataType(containerArray: any, dataContainers: DataType[]) {
         const dataType_item: DataType = {
             container_id: json_item["container_id"],
             container_image: json_item["container_image"],
-            container_name: json_item["container_name"],
+            container_name: json_item["container_name"].slice(0,50),
             container_status: json_item["container_status"]
         };
         console.log("Type: ", dataType_item);
