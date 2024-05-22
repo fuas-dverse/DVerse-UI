@@ -14,6 +14,9 @@ export const siteConfig = {
         }, {
             title: "Contact",
             href: "/contact",
+        }, {
+            title: "Containers",
+            href: "/containers",
         },
     ],
     links: {
