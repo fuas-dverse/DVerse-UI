@@ -14,7 +14,7 @@ export default function  DialogDemo(){
       <Dialog.Content className="DialogContent">
         <Dialog.Title className="DialogTitle">Edit profile</Dialog.Title>
         <Dialog.Description className="DialogDescription">
-          Make changes to your profile here. Click save when you're done.
+          Make changes to your profile here. Click save when you&apos;re done.
         </Dialog.Description>
         <fieldset className="Fieldset">
           <label className="Label" htmlFor="name">
