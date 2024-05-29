@@ -39,7 +39,7 @@ export default function ContainerPage() {
         fetchData();
     }, [page]);
 
-    const handleScroll = (event) => {
+    const handleScroll = (event: any) => {
         if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
         setPage(oldPage => oldPage + 1);
     };
