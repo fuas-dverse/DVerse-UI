@@ -24,6 +24,10 @@ export default function MessageBar(){
     //     setSocket(socket)
     // }, [])
 
+    function alert_box(){
+        alert("hello world")
+    }
+
     return (
         <div
             className="fixed bottom-0 z-10 p-4 bg-background container left-1/2 transform -translate-x-1/2">
@@ -37,7 +41,7 @@ export default function MessageBar(){
                     className=""
                     type={"text"}
                 />
-                <Button className={"bg-primary text-primary-foreground px-2"}>
+                <Button className={"bg-primary text-primary-foreground px-2"} onClick={alert_box}>
                 {/*<Button className={"bg-primary text-primary-foreground px-2"} onClick={handleSendMessage}>*/}
                     <div className={"hidden sm:block"}>
                         Send
