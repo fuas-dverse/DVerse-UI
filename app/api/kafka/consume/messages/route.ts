@@ -2,6 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { startConsumer, stopConsumer, consumeMessages } from '@/lib/kafka/kafkaConsumer';
 
+export const dynamic = 'force-dynamic'
+
+
 export async function GET(req: NextRequest) {
     const { readable, writable } = new TransformStream();
     const writer = writable.getWriter();

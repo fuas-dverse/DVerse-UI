@@ -15,6 +15,10 @@ export default function MessagePage() {
             console.error('EventSource failed:', error);
             eventSource.close();
         };
+
+        window.addEventListener('beforeunload', () => {
+            eventSource.close();
+        })
     }, []);
 
     return (
