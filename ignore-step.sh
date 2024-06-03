@@ -4,7 +4,7 @@ if [[ "$VERCEL_ENV" == "production" ]]; then
   # Proceed with the build
   echo "✅ - Build can proceed"
   exit 1
-elif [[ "$VERCEL_ENV" == "test" ]]; then
+elif [[ "$VERCEL_ENV" == "preview" ]]; then
   # Proceed with the build
   echo "✅ - Build can proceed"
   exit 1
