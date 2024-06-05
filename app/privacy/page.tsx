@@ -1,4 +1,4 @@
-export default function PrivacyStatement(){
+export default function PrivacyStatementPage(){
 
 return (
     <div className="w-[700px] min-h-full justify-items-center justify-center ml-[20%] space-y-4 text-lg">
