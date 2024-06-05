@@ -2,7 +2,7 @@ import Image from "next/image"
 import Login from "@/components/Auth/Login";
 
 export default function LoginPage() {
-	return (
+	return (		
 		<div className="w-full h-[calc(100vh-65px)] max-h-screen lg:grid lg:grid-cols-2">
 			<div className="flex h-full items-center justify-center">
 				<div className="mx-auto grid w-[350px] gap-6">
@@ -15,6 +15,9 @@ export default function LoginPage() {
 					<div className="grid gap-4">
 						<Login />
 					</div>
+					<p>
+						Please note that we have a privacy policy which you can see at: <a href="./PrivacyStatement">Privacy statement</a>
+					</p>
 				</div>
 			</div>
 			<div className="hidden bg-muted max-h-[calc(100vh-64px)] lg:flex items-center justify-center">
