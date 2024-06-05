@@ -17,6 +17,9 @@ export const siteConfig = {
         }, {
             title: "Containers",
             href: "/containers",
+        }, {
+            title: "Privacy Statement",
+            href: "/privacy",
         },
     ],
     links: {
