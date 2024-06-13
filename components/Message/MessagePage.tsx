@@ -53,9 +53,15 @@ export default function MessagePage({ user_email }: MessageBarProps) {
 
     // Establish WebSocket connection and set up listeners
     useEffect(() => {
-        const socket = io("http://localhost:5001");
+        const socket = io("http://localhost:5001", {
+            transports: ["websocket"],
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+        });
 
         socket.on(`response-${chatId}`, (message) => {
+            console.log(message)
             if (message && message.content && message.actor) {
                 setMessages((currentMessages) => [...currentMessages, message]);
             }
