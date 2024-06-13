@@ -6,9 +6,7 @@ import {Icons} from "@/components/Icons/icons";
 import {useEffect, useState} from "react";
 import {io} from "socket.io-client";
 import {useParams} from "next/navigation";
-import {createChat, deleteChat, getAllChats} from "@/app/chat/[chatId]/actions";
-
-let socket: WebSocket;
+import {addMessageToChat, createChat, deleteChat, getAllChats, getMessagesFromChat} from "@/app/chat/[chatId]/actions";
 
 interface MessageBarProps {
     user_email: string | null | undefined
@@ -33,7 +31,7 @@ export default function MessageBar({user_email}: MessageBarProps) {
                 "type": "text",
                 "value": newMessage,
             },
-            "chatId": chatId,
+            "chatid": chatId,
         }
 
         const newChat = {
@@ -46,17 +44,19 @@ export default function MessageBar({user_email}: MessageBarProps) {
 
         socket.emit("message", message)
 
+        await addMessageToChat(message)
+
         setNewMessage("")
     }
 
     async function sendMessage() {
-        handleSendMessage().then(async (response) => {
-            if (user_email === null) {
-                alert("User email is required in order to create new Chats")
-            }
-            console.log("Creating chat")
-            await createChat(chatId.toString(), user_email!, newMessage)
-        })
+        if (user_email === null) {
+            alert("User email is required in order to create new Chats")
+            return;
+        }
+        await handleSendMessage();
+        console.log("Creating chat");
+        await createChat(chatId.toString(), user_email!, newMessage);
     }
 
     async function refreshChatList() {
@@ -65,33 +65,28 @@ export default function MessageBar({user_email}: MessageBarProps) {
 
     async function handleDeleteMessage(chatId: string) {
         await deleteChat(chatId)
-
         socket.emit("deleteChat", chatId)
     }
 
     useEffect(() => {
-
         const socket = io("http://localhost:5001");
 
-        // socket.on(`response-${chatId}`, (message) => {
-        socket.on(`refreshChats`, (message) => {
+        socket.on(`refreshChats`, () => {
             refreshChatList()
         });
 
-    },[])
+        setSocket(socket);
 
-    useEffect(() => {
-        // Code gives error in the terminal, but does work in if connected to the right websocket server
-        // !! Is tested with a custom server
-        const socket = io("http://localhost:5001/")
-        setSocket(socket)
-    }, [])
+        return () => {
+            socket.disconnect();
+        }
+    }, [user_email])
 
     useEffect(() => {
         getAllChats(user_email!).then((response) => {
             setChatsList(response!)
         })
-    }, [])
+    }, [user_email])
 
     return (
         <div
@@ -107,7 +102,6 @@ export default function MessageBar({user_email}: MessageBarProps) {
                     type={"text"}
                 />
                 <Button className={"bg-primary text-primary-foreground px-2"} onClick={sendMessage}>
-                    {/*<Button className={"bg-primary text-primary-foreground px-2"} onClick={handleSendMessage}>*/}
                     <div className={"hidden sm:block"}>
                         Send
                     </div>

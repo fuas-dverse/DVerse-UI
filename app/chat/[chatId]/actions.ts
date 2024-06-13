@@ -8,8 +8,17 @@ interface ChatTable {
     chat_name: string;
 }
 
+export interface MessageTable {
+    actor: string;
+    chatid:  string | string[];
+    "@type": string;
+    "@context": string;
+    content: { type: string; value: string }
+}
+
 interface Database {
     chat: ChatTable;
+    message: MessageTable;
 }
 
 const db = createKysely<Database>();
@@ -55,7 +64,7 @@ export async function getChat(chatId: string, user_email: string) {
         .execute();
 }
 
-export async function checkIfChatExists(chatId: string){
+export async function checkIfChatExists(chatId: string) {
     console.log("Checking if chat exists")
     const chat = await db
         .selectFrom('chat')
@@ -71,5 +80,35 @@ export async function deleteChat(chatId: string) {
     await db
         .deleteFrom('chat')
         .where('chat_id', "=", chatId)
+        .execute();
+}
+
+export async function getMessagesFromChat(chatId: string): Promise<MessageTable[]> {
+    console.log("Getting messages from chat")
+
+    return await db
+        .selectFrom('message')
+        .selectAll()
+        .where('chatid', "=", chatId)
+        .execute();
+}
+
+export async function addMessageToChat(message: {
+    actor: string;
+    chatid: string | string[];
+    "@type": string;
+    "@context": string;
+    content: { type: string; value: string }
+}) {
+    console.log("Adding message to chat")
+    await db
+        .insertInto('message')
+        .values({
+            "@context": message["@context"],
+            "@type": message["@type"],
+            actor: message.actor,
+            chatid: message.chatid,
+            content: message.content,
+        })
         .execute();
 }
