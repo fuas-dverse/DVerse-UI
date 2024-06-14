@@ -11,6 +11,7 @@ export interface MessageBubbleProps {
 
 export default function MessageBubble({ actor, content, chatId }: MessageBubbleProps) {
     console.log("Rendering MessageBubble");
+    console.log(actor)
 
     return (
         <div className={`flex ${actor === 'agent' ? 'justify-start' : 'justify-end'}`}>

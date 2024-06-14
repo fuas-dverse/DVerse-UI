@@ -2,7 +2,7 @@
 
 import {createKysely} from '@vercel/postgres-kysely';
 
-interface ChatTable {
+export interface ChatTable {
     chat_id: string;
     user_email: string;
     chat_name: string;

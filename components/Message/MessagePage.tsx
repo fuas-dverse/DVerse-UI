@@ -3,8 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { io } from "socket.io-client";
 import MessageBubble from "@/components/Message/MessageBubble";
 import { useParams } from "next/navigation";
-import { getChat, getMessagesFromChat, MessageTable } from "@/app/chat/[chatId]/actions";
-import { IMessage } from "@/types/Message";
+import {ChatTable, getChat, getMessagesFromChat, MessageTable} from "@/app/chat/[chatId]/actions";
 
 interface MessageBarProps {
     user_email: string | null | undefined;
@@ -53,32 +52,35 @@ export default function MessagePage({ user_email }: MessageBarProps) {
 
     // Establish WebSocket connection and set up listeners
     useEffect(() => {
-        const socket = io("http://localhost:5001", {
-            transports: ["websocket"],
-            reconnection: true,
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-        });
+        const socket = io("http://localhost:5001");
+        setSocket(socket);
 
-        socket.on(`response-${chatId}`, (message) => {
-            console.log(message)
+        socket.on("connect", () => {
+            console.log("Connected to server");
+        })
+
+        socket.on("disconnect", () => {
+            console.log("Disconnected from server");
+        })
+
+        socket.on(`response-${chatId}`, (message: any) => {
+            console.log("Received message:", message)
             if (message && message.content && message.actor) {
                 setMessages((currentMessages) => [...currentMessages, message]);
             }
         });
 
-        socket.on(`refreshChats`, (message) => {
+        socket.on(`refreshChats`, (message: ChatTable) => {
             if (message && message.chat_name && currentChat === "New Chat") {
                 setCurrentChat(message.chat_name);
             }
         });
 
-        setSocket(socket);
 
         return () => {
             socket.disconnect();
         };
-    }, [chatId, currentChat]);
+    }, []);
 
     return (
         <>
