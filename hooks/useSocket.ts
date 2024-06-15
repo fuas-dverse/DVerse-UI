@@ -4,8 +4,11 @@ import { io, Socket as IOSocket } from "socket.io-client";
 // Define a type for the socket
 type SocketType = IOSocket | undefined;
 
-export function useSocket(onMessage: (data: { text: string, sender: "bot" | "user" }) => void): SocketType {
-	const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:5000";
+export function useSocket(onMessage: {
+	handleSocketMessage: (data: { text: string; sender: "bot" | "user"; chatId: string }) => void;
+	handleSocketResponse: (data: any) => void
+}): SocketType {
+	const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:5001";
 
 	const [socket, setSocket] = useState<SocketType>();
 
@@ -16,7 +19,15 @@ export function useSocket(onMessage: (data: { text: string, sender: "bot" | "use
 			console.log("Connected to server");
 		});
 
-		ws.on('message', onMessage);
+		ws.on("disconnect", (): void => {
+			console.log("Disconnected from server");
+		})
+
+		ws.on('message', onMessage.handleSocketMessage);
+
+		ws.on('response', (data) => {
+			console.log("Response received: ", data);
+		})
 
 		ws.on('error', (error: any): void => {
 			console.error("Socket error:", error);
