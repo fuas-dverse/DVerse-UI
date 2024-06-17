@@ -4,9 +4,9 @@ export interface IContent {
 }
 
 export interface IMessage {
-    '@context': string;
-    '@type': string;
     actor: string;
-    content: IContent;
-    chatId: string;
+    chatId:  string | string[];
+    "@type": string;
+    "@context": string;
+    content: IContent
 }

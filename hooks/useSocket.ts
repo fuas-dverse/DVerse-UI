@@ -27,9 +27,7 @@ export function useSocket(
 
 		ws.on('message', onMessage.handleSocketMessage);
 
-		ws.on(`response-${chatId}`, (data) => {
-			console.log("Response received: ", data);
-		})
+		ws.on(`response-${chatId}`, onMessage.handleSocketResponse)
 
 		ws.on('error', (error: any): void => {
 			console.error("Socket error:", error);
