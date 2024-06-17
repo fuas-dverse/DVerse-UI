@@ -24,7 +24,6 @@ export default function Page({ params }: { params: { chatId: string } }) {
     const [messages, setMessages] = useState<IMessage[]>([]);
     const [chatsList, setChatsList] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState("");
-    const [chatName, setChatName] = useState<string>("");
     const [userEmail, setUserEmail] = useState<string>();
     const router = useRouter();
 
@@ -81,7 +80,6 @@ export default function Page({ params }: { params: { chatId: string } }) {
      */
     const handleFirstMessage = async (message: IMessage) => {
         await createChat(params.chatId, userEmail!, message);
-        setChatName(message.content.value);
         setMessages((prev) => [...prev, message]);
 
         const chatName = await getCurrentChat();
