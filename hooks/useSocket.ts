@@ -4,7 +4,9 @@ import { io, Socket as IOSocket } from "socket.io-client";
 // Define a type for the socket
 type SocketType = IOSocket | undefined;
 
-export function useSocket(onMessage: {
+export function useSocket(
+	chatId: string,
+	onMessage: {
 	handleSocketMessage: (data: { text: string; sender: "bot" | "user"; chatId: string }) => void;
 	handleSocketResponse: (data: any) => void
 }): SocketType {
@@ -25,7 +27,7 @@ export function useSocket(onMessage: {
 
 		ws.on('message', onMessage.handleSocketMessage);
 
-		ws.on('response', (data) => {
+		ws.on(`response-${chatId}`, (data) => {
 			console.log("Response received: ", data);
 		})
 

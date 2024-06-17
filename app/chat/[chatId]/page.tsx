@@ -27,7 +27,7 @@ export default function Page({params}: { params: { chatId: string } }) {
         handleSocketResponse,
     }), [handleSocketMessage, handleSocketResponse]);
 
-    const socket = useSocket(socketEventHandlers);
+    const socket = useSocket(params.chatId, socketEventHandlers);
 
     function sendMessage() {
         if (!newMessage) {
