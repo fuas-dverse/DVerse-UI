@@ -13,7 +13,7 @@ export function useSocket(
 	chatId: string,
 	handlers: MessageHandlers
 ): SocketType {
-	const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:5001";
+	const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:8080";
 
 	const [socket, setSocket] = useState<SocketType>();
 
@@ -28,6 +28,8 @@ export function useSocket(
 			console.log("Disconnected from server");
 		});
 
+		if(handlers !=null){
+
 		if (handlers.handleSocketMessage) {
 			ws.on('message', handlers.handleSocketMessage);
 		}
@@ -35,6 +37,7 @@ export function useSocket(
 		if (handlers.handleSocketResponse) {
 			ws.on(`response-${chatId}`, handlers.handleSocketResponse);
 		}
+	}
 
 		ws.on('error', (error: any): void => {
 			console.error("Socket error:", error);
