@@ -7,9 +7,9 @@ type SocketType = IOSocket | undefined;
 export function useSocket(
 	chatId: string,
 	onMessage: {
-	handleSocketMessage: (data: { text: string; sender: "bot" | "user"; chatId: string }) => void;
-	handleSocketResponse: (data: any) => void
-}): SocketType {
+		handleSocketMessage: (data: { text: string; sender: "bot" | "user"; chatId: string }) => void;
+		handleSocketResponse: (data: any) => void
+	}): SocketType {
 	const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:5001";
 
 	const [socket, setSocket] = useState<SocketType>();

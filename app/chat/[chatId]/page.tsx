@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import MessageBubble from "@/components/Message/MessageBubble";
 import { HistoryBar } from "@/components/Sidebar/HistoryBar";
 import { Input } from "@/components/ui/input";
@@ -15,9 +15,9 @@ import {
     getMessagesFromChat,
     getUserEmail
 } from "@/app/chat/[chatId]/actions";
-import {IMessage} from "@/types/Message";
-import {useRouter} from "next/navigation";
-import {generateRandomID} from "@/lib/generateRandomID";
+import { IMessage } from "@/types/Message";
+import { useRouter } from "next/navigation";
+import { generateRandomID } from "@/lib/generateRandomID";
 
 export default function Page({ params }: { params: { chatId: string } }) {
     const [currentChat, setCurrentChat] = useState<string | null>("New Chat");
@@ -33,9 +33,17 @@ export default function Page({ params }: { params: { chatId: string } }) {
 
     const handleSocketResponse = useCallback((data: any): void => {
         if (data.actor === "agent") {
-            addMessageToChat(data);
+            if (Array.isArray(data.content)) {
+                data.content.forEach(async (contentItem: any) => {
+                    const message = { ...data, content: contentItem };
+                    await addMessageToChat(message);
+                    setMessages((prev) => [...prev, message]);
+                });
+            } else {
+                addMessageToChat(data);
+                setMessages((prev) => [...prev, data]);
+            }
         }
-        setMessages((prev) => [...prev, data]);
     }, []);
 
     const socketEventHandlers = useMemo(() => ({
@@ -69,15 +77,13 @@ export default function Page({ params }: { params: { chatId: string } }) {
 
         socket?.emit("message", message);
 
-        addMessageToChat(message);
+        // Add the message to the chat and update state
+        await addMessageToChat(message);
+        setMessages((prev) => [...prev, message]);
 
-        setNewMessage("")
+        setNewMessage("");
     };
 
-    /**
-     * Create a new chat with the first message
-     * @param message
-     */
     const handleFirstMessage = async (message: IMessage) => {
         await createChat(params.chatId, userEmail!, message);
         setMessages((prev) => [...prev, message]);
@@ -88,14 +94,9 @@ export default function Page({ params }: { params: { chatId: string } }) {
         const chats = await getAllChats(userEmail!);
         setChatsList(chats);
 
-        setNewMessage("")
-
+        setNewMessage("");
     };
 
-    /**
-     * Handle deleting a chat
-     * @param chatId
-     */
     const handleDeleteMessage = async (chatId: string) => {
         await deleteChat(chatId);
         setChatsList((prev) => prev.filter((chat) => chat.chat_id !== chatId));
@@ -106,7 +107,6 @@ export default function Page({ params }: { params: { chatId: string } }) {
         }
     };
 
-    // Helper function to get the current chat name
     const getCurrentChat = useCallback(async () => {
         try {
             const response = await getChat(params.chatId, userEmail!);
@@ -121,7 +121,6 @@ export default function Page({ params }: { params: { chatId: string } }) {
         }
     }, [params.chatId, userEmail]);
 
-    // Fetch the initial chat name and messages on component mount
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
@@ -143,30 +142,23 @@ export default function Page({ params }: { params: { chatId: string } }) {
         fetchInitialData();
     }, [params.chatId, getCurrentChat]);
 
-
     return (
-        <main
-            className="flex relative flex-col bg-background overflow-hidden sm:container p-4">
-            {/*Chat section*/}
+        <main className="flex relative flex-col bg-background overflow-hidden sm:container p-4">
             <h2 className="text-2xl font-bold">{currentChat}</h2>
             <div className="flex flex-1 flex-col overflow-y-auto mb-12">
-                {messages.map((message, index) => {
-                    return (
-                        <MessageBubble
-                            key={index}
-                            chatId={message.chatId}
-                            actor={message.actor}
-                            content={message.content}
-                        />
-                    );
-                })}
+                {messages.map((message, index) => (
+                    <MessageBubble
+                        key={index}
+                        chatId={message.chatId}
+                        actor={message.actor}
+                        content={message.content}
+                    />
+                ))}
             </div>
 
-            {/*Bottom bar for sending data*/}
-            <div
-                className="fixed bottom-0 z-10 p-4 bg-background container left-1/2 transform -translate-x-1/2">
-                <div className={"flex justify-between gap-4"}>
-                    <HistoryBar chats={chatsList.slice().reverse()} onDeleted={handleDeleteMessage}/>
+            <div className="fixed bottom-0 z-10 p-4 bg-background container left-1/2 transform -translate-x-1/2">
+                <div className="flex justify-between gap-4">
+                    <HistoryBar chats={chatsList.slice().reverse()} onDeleted={handleDeleteMessage} />
                     <Input
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
@@ -186,5 +178,5 @@ export default function Page({ params }: { params: { chatId: string } }) {
                 </div>
             </div>
         </main>
-    )
+    );
 }

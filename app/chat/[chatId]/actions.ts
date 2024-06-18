@@ -2,7 +2,7 @@
 
 import { createKysely } from '@vercel/postgres-kysely';
 import { IMessage } from "@/types/Message";
-import {auth} from "@/auth";
+import { auth } from "@/auth";
 
 export interface ChatTable {
     chat_id: string;
@@ -15,7 +15,7 @@ export interface MessageTable {
     chatid: string | string[];
     "@type": string;
     "@context": string;
-    content: { type: string; value: string }
+    content: { type: string; value: string };
 }
 
 interface Database {
@@ -50,7 +50,7 @@ export async function createChat(
     user_email: string,
     chatName: IMessage,
 ) {
-    console.log("Creating chat")
+    console.log("Creating chat");
     const exists = await checkIfChatExists(chatId);
 
     if (exists) {
@@ -79,7 +79,7 @@ export async function getAllChats(userEmail: string): Promise<any[]> {
 }
 
 export async function getChat(chatId: string, user_email: string) {
-    console.log(chatId, user_email)
+    console.log(chatId, user_email);
     console.log("Getting chat");
     return await db
         .selectFrom('chat')
@@ -154,9 +154,10 @@ export async function addMessageToChat(message: IMessage) {
 export async function getUserEmail(): Promise<string | null> {
     const session = await auth();
 
-    if (!session?.user?.email){
-        return null
+    if (!session?.user?.email) {
+        return null;
     }
 
-    return session.user?.email
+    return session.user?.email;
 }
+
