@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { io, Socket as IOSocket } from "socket.io-client";
+import {useParams} from "next/navigation";
 
 // Define a type for the socket
 type SocketType = IOSocket | undefined;
@@ -10,8 +11,8 @@ type MessageHandlers = {
 };
 
 export function useSocket(
-	chatId: string,
-	handlers: MessageHandlers
+	handlers: MessageHandlers,
+	chatId: string | null
 ): SocketType {
 	const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:5001";
 

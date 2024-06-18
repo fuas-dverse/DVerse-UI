@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Table } from "@/components/ui/table";
 import { Ban, SquareTerminal, ScrollText, Play, Pause, Trash2 } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import {useState, useEffect, useCallback, useMemo} from "react";
 import { useSocket } from "@/hooks/useSocket";
 
 type DataType = {
@@ -28,7 +28,11 @@ export default function ContainerPage() {
         }
     }, []);
 
-    const socket = useSocket(handleSocketMessage);//Don't add client/chatID causes infinite loop
+    const socketEventHandlers = useMemo(() => ({
+        handleSocketMessage,
+    }), [handleSocketMessage]);
+
+    const socket = useSocket(socketEventHandlers, null);//Don't add client/chatID causes infinite loop
 
     const fetchContainerData = useCallback(async (page: number): Promise<DataType[]> => {
         return new Promise<DataType[]>((resolve, reject) => {
