@@ -1,5 +1,3 @@
-import MessagePage from "@/components/Message/MessagePage";
-import MessageBar from "@/components/Message/MessageBar";
 
 export default async function Home() {
 
