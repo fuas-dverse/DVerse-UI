@@ -21,7 +21,7 @@ export default auth((req) => {
         style-src 'self' 'unsafe-inline';
         img-src 'self' data: blob: *;
         font-src 'self';
-        connect-src 'self' http://localhost:8080/ wss://localhost:8080/ ws://localhost:8080/;
+        connect-src 'self' http://localhost:5001/ wss://localhost:5001/ ws://localhost:5001/;
         object-src 'none';
         frame-ancestors 'none';
         form-action 'self';
