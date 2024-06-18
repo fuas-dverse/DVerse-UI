@@ -99,8 +99,8 @@ export default function Page({ params }: { params: { chatId: string } }) {
 
     const handleDeleteMessage = async (chatId: string) => {
         await deleteChat(chatId);
-        setChatsList((prev) => prev.filter((chat) => chat.chat_id !== chatId));
-        setMessages((prev) => prev.filter((message) => message.chatId !== chatId));
+        setChatsList((prev) => prev.filter((chat) => chat.chat_id != chatId));
+        setMessages((prev) => prev.filter((message) => message.chatId != chatId));
 
         if (chatId === params.chatId) {
             router.push("/chat/" + generateRandomID());

@@ -4,12 +4,15 @@ import { io, Socket as IOSocket } from "socket.io-client";
 // Define a type for the socket
 type SocketType = IOSocket | undefined;
 
+type MessageHandlers = {
+	handleSocketMessage?: (data: any) => void;
+	handleSocketResponse?: (data: any) => void;
+};
+
 export function useSocket(
 	chatId: string,
-	onMessage: {
-		handleSocketMessage: (data: { text: string; sender: "bot" | "user"; chatId: string }) => void;
-		handleSocketResponse: (data: any) => void
-	}): SocketType {
+	handlers: MessageHandlers
+): SocketType {
 	const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:5001";
 
 	const [socket, setSocket] = useState<SocketType>();
@@ -23,11 +26,15 @@ export function useSocket(
 
 		ws.on("disconnect", (): void => {
 			console.log("Disconnected from server");
-		})
+		});
 
-		ws.on('message', onMessage.handleSocketMessage);
+		if (handlers.handleSocketMessage) {
+			ws.on('message', handlers.handleSocketMessage);
+		}
 
-		ws.on(`response-${chatId}`, onMessage.handleSocketResponse)
+		if (handlers.handleSocketResponse) {
+			ws.on(`response-${chatId}`, handlers.handleSocketResponse);
+		}
 
 		ws.on('error', (error: any): void => {
 			console.error("Socket error:", error);
@@ -39,7 +46,7 @@ export function useSocket(
 		return (): void => {
 			ws.disconnect();
 		};
-	}, [SERVER_URL, onMessage]);
+	}, [SERVER_URL, handlers, chatId]);
 
 	return socket;
 }
