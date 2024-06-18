@@ -18,16 +18,17 @@ export default auth((req) => {
         default-src 'self';
         script-src 'self' 'strict-dynamic' 'unsafe-eval' 'nonce-${nonce}';
         script-src-elem 'self' 'unsafe-inline';
-        style-src 'self' 'unsafe-inline' ;
-        img-src 'self' data: blob:;
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: blob: *;
         font-src 'self';
-        connect-src 'self' http://localhost:5000/ wss://localhost:5000/ ws://localhost:5000/;
-        object-src 'none'; 
+        connect-src 'self' http://localhost:5001/ wss://localhost:5001/ ws://localhost:5001/;
+        object-src 'none';
         frame-ancestors 'none';
-        form-action 'self'; 
+        form-action 'self';
         upgrade-insecure-requests;
         base-uri 'self'
-    `.replace(/\s{2,}/g, ' ').trim()
+    `.replace(/\s{2,}/g, ' ').trim();
+
 
 
     const requestHeaders = new Headers(req.headers)
