@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Table } from "@/components/ui/table";
 import { Ban, SquareTerminal, ScrollText, Play, Pause, Trash2 } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import {useState, useEffect, useCallback, useMemo} from "react";
 import { useSocket } from "@/hooks/useSocket";
 
 type DataType = {
@@ -28,7 +28,11 @@ export default function ContainerPage() {
         }
     }, []);
 
-    const socket = useSocket("", { handleSocketMessage });
+    const socketEventHandlers = useMemo(() => ({
+        handleSocketMessage,
+    }), [handleSocketMessage]);
+
+    const socket = useSocket(socketEventHandlers, null);//Don't add client/chatID causes infinite loop
 
     const fetchContainerData = useCallback(async (page: number): Promise<DataType[]> => {
         return new Promise<DataType[]>((resolve, reject) => {
@@ -49,9 +53,7 @@ export default function ContainerPage() {
     }, [socket]);
 
     const fetchData = useCallback(async () => {
-        if (loading) return;  // Prevent multiple fetches at the same time
-        setLoading(true);
-        try {
+        try {            
             const newData = await fetchContainerData(page);
             setData(oldData => [...oldData, ...newData]);
         } catch (error) {
@@ -185,19 +187,11 @@ export default function ContainerPage() {
 }
 
 function parseToDataType(containerArray: any, dataContainers: DataType[]) {
-    containerArray.forEach((item: string) => {
-        if (!item.endsWith("}\"")) {
-            item = item + "}\"";
-        }
-
-        console.log("Before: ", item);
+    containerArray.forEach((item: string) => {        
         item = item.replace(/'/g, "");
 
-        console.log("Item: ", item);
         const trimmedItem = item.trim();
-        console.log(trimmedItem);
         let json_item = JSON.parse(trimmedItem);
-        json_item = JSON.parse(json_item);
 
         const dataType_item: DataType = {
             container_id: json_item["container_id"],

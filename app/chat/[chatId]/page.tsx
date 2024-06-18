@@ -26,7 +26,7 @@ export default function Page({ params }: { params: { chatId: string } }) {
     const [newMessage, setNewMessage] = useState("");
     const [userEmail, setUserEmail] = useState<string>();
     const router = useRouter();
-
+    const chatId = params.chatId;
     const handleSocketMessage = useCallback((data: { text: string, sender: "bot" | "user", chatId: string }): void => {
         console.log("Message received:", data);
     }, []);
@@ -51,7 +51,7 @@ export default function Page({ params }: { params: { chatId: string } }) {
         handleSocketResponse,
     }), [handleSocketMessage, handleSocketResponse]);
 
-    const socket = useSocket(params.chatId, socketEventHandlers);
+    const socket = useSocket(socketEventHandlers, chatId);
 
     const sendMessage = async () => {
         if (!newMessage) {
@@ -67,7 +67,7 @@ export default function Page({ params }: { params: { chatId: string } }) {
                 "type": "text",
                 "value": newMessage,
             },
-            "chatId": params.chatId,
+            "chatId": chatId,
         };
 
         if (messages.length === 0) {
@@ -85,7 +85,7 @@ export default function Page({ params }: { params: { chatId: string } }) {
     };
 
     const handleFirstMessage = async (message: IMessage) => {
-        await createChat(params.chatId, userEmail!, message);
+        await createChat(chatId, userEmail!, message);
         setMessages((prev) => [...prev, message]);
 
         const chatName = await getCurrentChat();
@@ -102,14 +102,14 @@ export default function Page({ params }: { params: { chatId: string } }) {
         setChatsList((prev) => prev.filter((chat) => chat.chat_id != chatId));
         setMessages((prev) => prev.filter((message) => message.chatId != chatId));
 
-        if (chatId === params.chatId) {
+        if (chatId === chatId) {
             router.push("/chat/" + generateRandomID());
         }
     };
 
     const getCurrentChat = useCallback(async () => {
         try {
-            const response = await getChat(params.chatId, userEmail!);
+            const response = await getChat(chatId, userEmail!);
             if (Array.isArray(response) && response.length > 0 && response[0].chat_name) {
                 return response[0].chat_name;
             } else {
@@ -119,7 +119,7 @@ export default function Page({ params }: { params: { chatId: string } }) {
             console.error("Error fetching chat:", error);
             return "New Chat";
         }
-    }, [params.chatId, userEmail]);
+    }, [chatId, userEmail]);
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -129,7 +129,7 @@ export default function Page({ params }: { params: { chatId: string } }) {
                     setUserEmail(email);
                     const chatName = await getCurrentChat();
                     setCurrentChat(chatName!);
-                    const initialMessages = await getMessagesFromChat(params.chatId);
+                    const initialMessages = await getMessagesFromChat(chatId);
                     setMessages(initialMessages);
                     const chats = await getAllChats(email);
                     setChatsList(chats);
@@ -140,7 +140,7 @@ export default function Page({ params }: { params: { chatId: string } }) {
         };
 
         fetchInitialData();
-    }, [params.chatId, getCurrentChat]);
+    }, [chatId, getCurrentChat]);
 
     return (
         <main className="flex relative flex-col bg-background overflow-hidden sm:container p-4">
