@@ -149,14 +149,21 @@ export default function Page({ params }: { params: { chatId: string } }) {
         <main className="flex relative flex-col bg-background overflow-hidden sm:container p-4">
             <h2 className="text-2xl font-bold">{currentChat}</h2>
             <div className="flex flex-1 flex-col overflow-y-auto mb-12">
-                {messages.map((message, index) => (
-                    <MessageBubble
-                        key={index}
-                        chatId={message.chatId}
-                        actor={message.actor}
-                        content={message.content}
-                    />
-                ))}
+                {
+                    messages.map((message, index) => {
+                        let content = message.content;
+                        if (Array.isArray(content)) {
+                            console.log(content)
+                        }
+                        return (
+                            <MessageBubble
+                                key={index}
+                                actor={message.actor}
+                                message={content}
+                            />
+                        );
+                    })
+                }
             </div>
 
             <div className="fixed bottom-0 z-10 p-4 bg-background container left-1/2 transform -translate-x-1/2">

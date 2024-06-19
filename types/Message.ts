@@ -1,6 +1,8 @@
 export interface IContent {
     type: string;
     value: string;
+    message: any;
+    agent: string;
 }
 
 export interface IMessage {
@@ -8,5 +10,5 @@ export interface IMessage {
     chatId:  string | string[];
     "@type": string;
     "@context": string;
-    content: IContent
+    content: IContent | IContent[];
 }
