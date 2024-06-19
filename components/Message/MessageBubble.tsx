@@ -3,13 +3,11 @@ import {memo} from "react";
 export interface MessageBubbleProps {
     actor: string;
     chatId: string | string[];
-    content: {
-        type: string;
-        value: string;
-    }
+    content: any
 }
 
 export default function MessageBubble({actor, content, chatId}: MessageBubbleProps) {
+    const obj = JSON.stringify(content)
     return (
         <div className={`flex flex-col ${actor === 'agent' ? 'items-start' : 'items-end'}`}>
             <div
@@ -19,7 +17,7 @@ export default function MessageBubble({actor, content, chatId}: MessageBubblePro
                 {content.type === 'img' ? (
                     <img src={content.value} alt="response" className="max-w-full max-h-64" />
                 ) : (
-                    content.value
+                    obj
                 )}
             </div>
         </div>

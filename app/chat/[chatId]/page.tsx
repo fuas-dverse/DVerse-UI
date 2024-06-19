@@ -32,6 +32,7 @@ export default function Page({ params }: { params: { chatId: string } }) {
     }, []);
 
     const handleSocketResponse = useCallback((data: any): void => {
+        console.log(data)
         if (data.actor === "agent") {
             if (Array.isArray(data.content)) {
                 data.content.forEach(async (contentItem: any) => {
@@ -85,6 +86,8 @@ export default function Page({ params }: { params: { chatId: string } }) {
     };
 
     const handleFirstMessage = async (message: IMessage) => {
+        socket?.emit("message", message);
+
         await createChat(chatId, userEmail!, message);
         setMessages((prev) => [...prev, message]);
 

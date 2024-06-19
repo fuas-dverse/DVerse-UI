@@ -14,7 +14,7 @@ export function useSocket(
 	handlers: MessageHandlers,
 	chatId: string | null
 ): SocketType {
-	const SERVER_URL = process.env.SERVER_URL ?? "http://localhost:5001";
+	const SERVER_URL = process.env.SERVER_URL ?? "http://127.0.0.1:5000/";
 
 	const [socket, setSocket] = useState<SocketType>();
 
