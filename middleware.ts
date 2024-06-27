@@ -18,22 +18,19 @@ export default auth((req) => {
         default-src 'self';
         script-src 'self' 'strict-dynamic' 'unsafe-eval' 'nonce-${nonce}';
         script-src-elem 'self' 'unsafe-inline';
-        style-src 'self' 'unsafe-inline' ;
-        img-src 'self' data: blob:;
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: blob: *;
         font-src 'self';
-        connect-src 'self' http://localhost:5000/ wss://localhost:5000/ ws://localhost:5000/;
-        object-src 'none'; 
+        connect-src 'self' http://34.147.2.18:5000/ https://34.147.2.18:5000/ wss://34.147.2.18:5000/ ws://34.147.2.18:5000/ http://127.0.0.1:5000/ https://127.0.0.1:5000/ wss://127.0.0.1:5000/ ws://127.0.0.1:5000/;
+        object-src 'none';
         frame-ancestors 'none';
-        form-action 'self'; 
-        upgrade-insecure-requests;
-        base-uri 'self'
-    `.replace(/\s{2,}/g, ' ').trim()
+        form-action 'self';
+        base-uri 'self';
+    `.replace(/\s{2,}/g, ' ').trim();
 
-
-    const requestHeaders = new Headers(req.headers)
-    requestHeaders.set('x-nonce', nonce)
-    requestHeaders.set('Content-Security-Policy', cspHeader)
-
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('x-nonce', nonce);
+    requestHeaders.set('Content-Security-Policy', cspHeader);
 
     const response = NextResponse.next({
         request: {
@@ -42,7 +39,7 @@ export default auth((req) => {
     })
     response.headers.set('Content-Security-Policy', cspHeader)
 
-    return response
+    return response;
 });
 
 export const config = {

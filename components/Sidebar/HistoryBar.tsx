@@ -1,7 +1,5 @@
 "use client"
-
-import Link from "next/link"
-import {usePathname} from "next/navigation"
+import {usePathname, useRouter} from "next/navigation"
 
 import {cn} from "@/lib/utils"
 import {NavItem} from "@/types/nav";
@@ -15,24 +13,30 @@ import {
     SheetTitle,
     SheetTrigger
 } from "@/components/ui/sheet";
-import {Separator} from "@/components/ui/separator";
 import {Icons} from "@/components/Icons/icons";
+import {Trash, Trash2, TrashIcon} from "lucide-react";
+import {useEffect, useState} from "react";
+import {io} from "socket.io-client";
 
 export interface DocsSidebarNavProps {
     items: NavItem[]
 }
 
-const chats = [
-    {id: 1, name: 'Chat 1', message: 'Can you help me with booking a vacation?'},
-    {id: 1, name: 'Chat 1', message: 'Can you help me with setting up a business?'},
-    {id: 1, name: 'Chat 1', message: 'Can you create a logo for me?'},
-    {id: 1, name: 'Chat 1', message: 'Can you help me with booking a vacation?'},
-    {id: 1, name: 'Chat 1', message: 'Can you help me with booking a vacation?'},
-    // Add more chats as needed
-];
+interface HistoryBarProps {
+    chats: {
+        chat_id: number,
+        user_email: string,
+        chat_name: string,
+    }[],
+    onDeleted: (chatId: string) => void
+}
 
-export function HistoryBar() {
-    const pathname = usePathname()
+export function HistoryBar({ chats, onDeleted }: HistoryBarProps) {
+    const router = useRouter()
+
+    function goToChat(chat_id: number) {
+        router.push(`/chat/${chat_id}`)
+    }
 
     return (
         <Sheet>
@@ -49,17 +53,26 @@ export function HistoryBar() {
             <SheetContent side={"left"}>
                 <SheetHeader>
                     <SheetTitle className={"text-2xl font-bold mb-4"}>History</SheetTitle>
-                    <SheetDescription className={"space-y-2 flex flex-col"}>
+                    <div className={"space-y-2 flex flex-col"}>
                         {
                             chats.map((chat, index) => {
-                                return <Button key={index} className={"text-left bg-secondary text-secondary-foreground inline-block whitespace-nowrap overflow-hidden text-ellipsis"}>
-                                    {
-                                        chat.message
-                                    }
-                                </Button>
+                                return <div key={index} className={"flex flex-row space-x-2"}>
+                                    <Button onClick={() => {
+                                        goToChat(chat.chat_id)
+                                    }} className={"text-left bg-secondary text-secondary-foreground inline-block whitespace-nowrap overflow-hidden text-ellipsis w-full"}>
+                                        {
+                                            chat.chat_name
+                                        }
+                                    </Button>
+                                    <Button variant={"destructive"} className={"m-0 p-3"} onClick={() => {
+                                        onDeleted(chat.chat_id.toString())
+                                    }}>
+                                        <Trash2 size={16}/>
+                                    </Button>
+                                </div>
                             })
                         }
-                    </SheetDescription>
+                    </div>
                 </SheetHeader>
             </SheetContent>
         </Sheet>
