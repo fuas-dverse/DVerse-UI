@@ -1,7 +1,7 @@
 "use server";
 
 import { createKysely } from '@vercel/postgres-kysely';
-import { IMessage } from "@/types/Message";
+import {IContent, IMessage} from "@/types/Message";
 import { auth } from "@/auth";
 
 export interface ChatTable {
@@ -15,7 +15,7 @@ export interface MessageTable {
     chatid: string | string[];
     "@type": string;
     "@context": string;
-    content: { type: string; value: string };
+    content: IContent | IContent[];
 }
 
 interface Database {
@@ -57,12 +57,19 @@ export async function createChat(
         return "Chat already exists";
     }
 
+    let chatNameValue: string;
+    if (Array.isArray(chatName.content)) {
+        chatNameValue = chatName.content[0].value; // Use the first content value if it's an array
+    } else {
+        chatNameValue = chatName.content.value; // Use the content value directly if it's a single object
+    }
+
     await db
         .insertInto('chat')
         .values({
             chat_id: chatId,
             user_email: user_email,
-            chat_name: chatName.content.value,
+            chat_name: chatNameValue, // Adjusted to handle single content case
         })
         .execute();
 
@@ -160,4 +167,3 @@ export async function getUserEmail(): Promise<string | null> {
 
     return session.user?.email;
 }
-

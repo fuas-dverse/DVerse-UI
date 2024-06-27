@@ -1,13 +1,11 @@
 export interface IContent {
     type: string;
     value: string;
-    message: any;
-    agent: string;
 }
 
 export interface IMessage {
     actor: string;
-    chatId:  string | string[];
+    chatId: string | string[];
     "@type": string;
     "@context": string;
     content: IContent | IContent[];

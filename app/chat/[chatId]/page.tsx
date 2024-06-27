@@ -159,7 +159,7 @@ export default function Page({ params }: { params: { chatId: string } }) {
                             <MessageBubble
                                 key={index}
                                 actor={message.actor}
-                                message={content}
+                                message={message}
                             />
                         );
                     })
